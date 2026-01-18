@@ -4,7 +4,9 @@ import time
 import uuid
 import base64
 import os
-import requests
+import json
+import urllib.request
+import urllib.error
 from fastapi import HTTPException
 
 class SwitchBotClient:
@@ -33,46 +35,37 @@ class SwitchBotClient:
             'Authorization': self.token,
             't': t,
             'sign': str(sign, 'utf-8'),
-            'nonce': nonce
+            'nonce': nonce,
+            'Content-Type': 'application/json; charset=utf8'
         }
+
+    def _request(self, url: str) -> dict:
+        headers = self._get_auth_headers()
+        req = urllib.request.Request(url, headers=headers)
+        
+        try:
+            with urllib.request.urlopen(req) as response:
+                body = response.read()
+                data = json.loads(body)
+                
+                if data.get("statusCode") != 100:
+                    raise HTTPException(
+                        status_code=response.getcode(),
+                        detail=f"Switchbot API error: {data.get('message')}"
+                    )
+                return data.get("body", {})
+                
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode('utf-8') if e.fp else str(e)
+            raise HTTPException(status_code=e.code, detail=f"Switchbot API HTTP error: {detail}")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to communicate with Switchbot API: {str(e)}")
 
     def get_device_status(self, device_id: str) -> dict:
         url = f"{self.base_url}/devices/{device_id}/status"
-        headers = self._get_auth_headers()
-        
-        try:
-            response = requests.get(url, headers=headers)
-            response.raise_for_status()
-            data = response.json()
-            
-            if data.get("statusCode") != 100:
-                raise HTTPException(
-                    status_code=response.status_code,
-                    detail=f"Switchbot API error: {data.get('message')}"
-                )
-                
-            return data.get("body", {})
-            
-        except requests.RequestException as e:
-            raise HTTPException(status_code=500, detail=f"Failed to fetch device status: {str(e)}")
+        return self._request(url)
 
     def get_devices(self) -> dict:
         """Fetch the list of all devices."""
         url = f"{self.base_url}/devices"
-        headers = self._get_auth_headers()
-        
-        try:
-            response = requests.get(url, headers=headers)
-            response.raise_for_status()
-            data = response.json()
-            
-            if data.get("statusCode") != 100:
-                raise HTTPException(
-                    status_code=response.status_code,
-                    detail=f"Switchbot API error: {data.get('message')}"
-                )
-                
-            return data.get("body", {})
-            
-        except requests.RequestException as e:
-            raise HTTPException(status_code=500, detail=f"Failed to fetch devices: {str(e)}")
+        return self._request(url)
