@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.services.camera import capture_jpeg
 from app.services.switchbot import SwitchBotClient
+from app.services.soil import get_soil_moisture
 
 router = APIRouter()
 
@@ -40,3 +41,9 @@ def get_meter_sensor():
         "temperature": status.get("temperature"),
         "humidity": status.get("humidity")
     }
+
+
+@router.get("/sensor/soil")
+def get_soil_sensor():
+    """Fetch soil moisture data from the connected sensor."""
+    return get_soil_moisture()
