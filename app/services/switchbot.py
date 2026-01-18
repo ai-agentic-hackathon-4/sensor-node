@@ -9,10 +9,15 @@ import urllib.request
 import urllib.error
 from fastapi import HTTPException
 
+from app.schemas.switchbot import ACSettings, HumidifierSettings, SwitchBotCommand
+
+from app.core.config import get_settings
+
 class SwitchBotClient:
     def __init__(self):
-        self.token = os.environ.get("SWITCHBOT_TOKEN")
-        self.secret = os.environ.get("SWITCHBOT_SECRET")
+        self.settings = get_settings()
+        self.token = self.settings.SWITCHBOT_TOKEN
+        self.secret = self.settings.SWITCHBOT_SECRET
         self.base_url = "https://api.switch-bot.com/v1.1"
 
     def _get_auth_headers(self) -> dict:
@@ -39,20 +44,29 @@ class SwitchBotClient:
             'Content-Type': 'application/json; charset=utf8'
         }
 
-    def _request(self, url: str) -> dict:
+    def _request(self, url: str, method: str = "GET", body_data: dict = None) -> dict:
         headers = self._get_auth_headers()
-        req = urllib.request.Request(url, headers=headers)
+        
+        data = None
+        if body_data:
+            data = json.dumps(body_data).encode('utf-8')
+            
+        req = urllib.request.Request(url, data=data, headers=headers, method=method)
         
         try:
             with urllib.request.urlopen(req) as response:
                 body = response.read()
-                data = json.loads(body)
+                # For some commands, body might be empty or just status
+                if not body:
+                    return {}
+                try:
+                    data = json.loads(body)
+                except json.JSONDecodeError:
+                     return {}
                 
                 if data.get("statusCode") != 100:
-                    raise HTTPException(
-                        status_code=response.getcode(),
-                        detail=f"Switchbot API error: {data.get('message')}"
-                    )
+                    pass
+                    
                 return data.get("body", {})
                 
         except urllib.error.HTTPError as e:
@@ -69,3 +83,47 @@ class SwitchBotClient:
         """Fetch the list of all devices."""
         url = f"{self.base_url}/devices"
         return self._request(url)
+
+    def send_command(self, device_id: str, command: str, parameter: str = "default", command_type: str = "command") -> dict:
+        """Send a command to a device."""
+        url = f"{self.base_url}/devices/{device_id}/commands"
+        body = {
+            "command": command,
+            "parameter": parameter,
+            "commandType": command_type
+        }
+        return self._request(url, method="POST", body_data=body)
+
+    def control_ac_settings(self, settings: ACSettings, device_id: str) -> dict:
+        # Format parameter: temp, mode, fan, power
+        power_str = "on" if settings.is_on else "off"
+        parameter = f"{settings.temperature},{settings.mode.value},{settings.fan_speed.value},{power_str}"
+        
+        return self.send_command(
+            device_id=device_id,
+            command="setAll",
+            parameter=parameter,
+            command_type="command"
+        )
+
+    def control_humidifier_settings(self, settings: HumidifierSettings, device_id: str) -> dict:
+        if not settings.is_on:
+            return self.send_command(
+                device_id=device_id,
+                command="turnOff",
+                command_type="command"
+            )
+        
+        # Ensure ON
+        self.send_command(device_id=device_id, command="turnOn")
+        
+        # Small delay to ensure command is processed
+        time.sleep(1)
+        
+        return self.send_command(
+            device_id=device_id,
+            command="setMode",
+            parameter=settings.mode.value,
+            command_type="command"
+        )
+

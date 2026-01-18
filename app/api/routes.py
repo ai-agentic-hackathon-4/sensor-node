@@ -7,6 +7,9 @@ from app.services.camera import capture_jpeg
 from app.services.switchbot import SwitchBotClient
 from app.services.soil import get_soil_moisture
 
+from app.schemas.switchbot import ACSettings, HumidifierSettings
+
+
 router = APIRouter()
 
 
@@ -32,7 +35,9 @@ def get_image(width: int = None, height: int = None) -> dict:
 @router.get("/sensor/meter")
 def get_meter_sensor():
     """Fetch temperature and humidity from the configured Switchbot meter."""
-    device_id = os.environ.get("SWITCHBOT_METER_DEVICE_ID")
+    from app.core.config import get_settings
+    settings = get_settings()
+    device_id = settings.SWITCHBOT_METER_DEVICE_ID
     if not device_id:
         raise HTTPException(status_code=500, detail="SWITCHBOT_METER_DEVICE_ID not set")
         
@@ -49,3 +54,29 @@ def get_meter_sensor():
 def get_soil_sensor():
     """Fetch soil moisture data from the connected sensor."""
     return get_soil_moisture()
+    
+
+@router.post("/control/air-conditioner/settings")
+def control_ac_settings(settings: ACSettings):
+    """
+    Control AC with specific settings (Temp, Mode, Fan).
+    Command: setAll
+    Parameter: {temperature},{mode},{fan_speed},{power_state}
+    """
+    from app.core.config import get_settings
+    settings_conf = get_settings()
+    device_id = settings_conf.SWITCHBOT_AC_DEVICE_ID
+    
+    client = SwitchBotClient()
+    return client.control_ac_settings(settings, device_id)
+
+@router.post("/control/humidifier/settings")
+def control_humidifier_settings(settings: HumidifierSettings):
+    """
+    Control Humidifier modes.
+    """
+    from app.core.config import get_settings
+    settings_conf = get_settings()
+    device_id = settings_conf.SWITCHBOT_HUMIDIFIER_DEVICE_ID
+    client = SwitchBotClient()
+    return client.control_humidifier_settings(settings, device_id)
