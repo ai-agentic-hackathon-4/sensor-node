@@ -5,7 +5,7 @@ from pathlib import Path
 from fastapi import HTTPException
 
 
-def capture_jpeg(width: int = 800, height: int = 600, timeout_ms: int = 2000) -> bytes:
+def capture_jpeg(width: int = None, height: int = None, timeout_ms: int = 2000) -> bytes:
     """Capture a JPEG image using rpicam-jpeg and return raw bytes."""
     with tempfile.TemporaryDirectory() as tmpdir:
         img_path = Path(tmpdir) / "capture.jpg"
@@ -15,11 +15,11 @@ def capture_jpeg(width: int = 800, height: int = 600, timeout_ms: int = 2000) ->
             str(img_path),
             "-t",
             str(timeout_ms),
-            "--width",
-            str(width),
-            "--height",
-            str(height),
         ]
+        if width:
+            cmd.extend(["--width", str(width)])
+        if height:
+            cmd.extend(["--height", str(height)])
         result = subprocess.run(cmd, capture_output=True)
         if result.returncode != 0:
             stderr = result.stderr.decode("utf-8", errors="ignore")

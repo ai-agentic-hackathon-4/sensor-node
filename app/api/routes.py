@@ -11,10 +11,12 @@ router = APIRouter()
 
 
 @router.get("/image")
-def get_image(width: int = 800, height: int = 600) -> dict:
+def get_image(width: int = None, height: int = None) -> dict:
     """Capture a frame from the Pi camera and return it as base64."""
-    if width <= 0 or height <= 0:
-        raise HTTPException(status_code=400, detail="Width and height must be positive")
+    if width is not None and width <= 0:
+        raise HTTPException(status_code=400, detail="Width must be positive")
+    if height is not None and height <= 0:
+        raise HTTPException(status_code=400, detail="Height must be positive")
 
     image_bytes = capture_jpeg(width=width, height=height)
     encoded = base64.b64encode(image_bytes).decode("ascii")
