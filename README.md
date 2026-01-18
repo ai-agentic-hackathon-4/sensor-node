@@ -124,7 +124,7 @@ curl -X POST "http://localhost:8000/control/humidifier/settings" \
   -d '{"mode":"103","is_on":true}'
 ```
 
-`mode` は `auto`, `101`(LOW), `102`(MEDIUM), `103`(HIGH) です。`is_on` を `false` にすると電源をオフにします。
+`mode` は文字列で `auto`, `101`(LOW), `102`(MEDIUM), `103`(HIGH) を指定します。`is_on` を `false` にすると電源をオフにします。
 
 ## 参考: 手動撮影コマンド
 FastAPI を介さずに撮影する場合の例です。
