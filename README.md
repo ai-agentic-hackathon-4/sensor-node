@@ -10,6 +10,7 @@ Raspberry Pi カメラで撮影した JPEG 画像を FastAPI で base64 エン�
 │   │   └── routes.py       # ルーティングとエンドポイント
 │   ├── services
 │   │   └── camera.py       # カメラ撮影ロジック
+│   │   └── switchbot.py    # Switchbot APIクライアント
 │   └── app.py              # FastAPI アプリ工場関数
 ├── main.py                 # uvicorn で読み込むエントリポイント
 └── README.md
@@ -21,7 +22,7 @@ Raspberry Pi カメラで撮影した JPEG 画像を FastAPI で base64 エン�
 
 ## セットアップ
 ```bash
-pip install fastapi uvicorn
+pip install -r requirements.txt
 ```
 
 ## サーバー起動
@@ -51,6 +52,33 @@ curl "http://localhost:8000/image?width=800&height=600"
 	"height": 600,
 	"format": "jpeg",
 	"data_base64": "...base64..."
+}
+```
+
+## Switchbot 温湿度取得
+### セットアップ
+1. `.env.example` をコピーして `.env` を作成し、Switchbot のトークン・シークレットおよびデバイスIDを設定してください。
+   ```bash
+   cp .env.example .env
+   ```
+2. 依存ライブラリをインストールしてください。
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### データの取得
+GET `/sensor/meter` で設定された温湿度計からデータを取得します。
+
+例:
+```bash
+curl "http://localhost:8000/sensor/meter"
+```
+
+レスポンス例:
+```json
+{
+  "temperature": 25.5,
+  "humidity": 50
 }
 ```
 

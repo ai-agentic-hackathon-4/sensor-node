@@ -1,8 +1,10 @@
 import base64
+import os
 
 from fastapi import APIRouter, HTTPException
 
 from app.services.camera import capture_jpeg
+from app.services.switchbot import SwitchBotClient
 
 router = APIRouter()
 
@@ -21,4 +23,20 @@ def get_image(width: int = 800, height: int = 600) -> dict:
         "height": height,
         "format": "jpeg",
         "data_base64": encoded,
+    }
+
+
+@router.get("/sensor/meter")
+def get_meter_sensor():
+    """Fetch temperature and humidity from the configured Switchbot meter."""
+    device_id = os.environ.get("SWITCHBOT_METER_DEVICE_ID")
+    if not device_id:
+        raise HTTPException(status_code=500, detail="SWITCHBOT_METER_DEVICE_ID not set")
+        
+    client = SwitchBotClient()
+    status = client.get_device_status(device_id)
+    
+    return {
+        "temperature": status.get("temperature"),
+        "humidity": status.get("humidity")
     }
