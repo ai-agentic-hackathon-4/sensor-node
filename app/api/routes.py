@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException
 from app.services.camera import capture_jpeg
 from app.services.switchbot import SwitchBotClient
 from app.services.soil import get_soil_moisture
+from app.services.bh1750 import get_lux
 
 from app.schemas.switchbot import ACSettings, HumidifierSettings
 
@@ -80,6 +81,12 @@ def get_humidifier_status():
 def get_soil_sensor():
     """Fetch soil moisture data from the connected sensor."""
     return get_soil_moisture()
+
+
+@router.get("/sensor/bh1750")
+def get_bh1750_sensor():
+    """Fetch lux data from the BH1750 sensor."""
+    return get_lux()
     
 
 
