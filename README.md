@@ -1,6 +1,6 @@
 # sensor-node
 
-Raspberry Pi カメラ画像の取得、SwitchBot 温湿度計/エアコン/加湿器の制御、土壌センサーの読み取りを FastAPI で提供します。
+Raspberry Pi カメラ画像の取得、SwitchBot 温湿度計/エアコン/加湿器の制御、土壌センサー/BH1750照度センサーの読み取りを FastAPI で提供します。
 
 ## 構成
 ```
@@ -12,6 +12,7 @@ Raspberry Pi カメラ画像の取得、SwitchBot 温湿度計/エアコン/加�
 │   │   └── camera.py       # カメラ撮影ロジック
 │   │   └── switchbot.py    # Switchbot APIクライアント
 │   │   └── soil.py         # 土壌センサー読み取り
+│   │   └── bh1750.py       # BH1750照度センサー読み取り
 │   ├── schemas
 │   │   └── switchbot.py    # Switchbot制御の入力モデル
 │   └── app.py              # FastAPI アプリ工場関数
@@ -22,6 +23,7 @@ Raspberry Pi カメラ画像の取得、SwitchBot 温湿度計/エアコン/加�
 ## 前提
 - Raspberry Pi OS 環境で `rpicam-jpeg` コマンドが利用可能であること
 - 土壌センサーは ADS1115 (Adafruit-ADS1x15) を使用するため I2C を有効化済みであること
+- BH1750 照度センサーも I2C を使用します
 - Python 3.9+ を想定
 
 ## セットアップ
@@ -99,6 +101,23 @@ curl "http://localhost:8000/sensor/soil"
   "raw_value": 10500,
   "moisture_percent": 50.0,
   "status": "mock"
+  "status": "mock"
+}
+```
+
+## BH1750 照度取得
+GET `/sensor/bh1750` で照度センサー値を取得します。I2Cデバイスが見つからない場合はモック値を返します。
+
+例:
+```bash
+curl "http://localhost:8000/sensor/bh1750"
+```
+
+レスポンス例:
+```json
+{
+  "lux": 150.0,
+  "status": "ok"
 }
 ```
 
