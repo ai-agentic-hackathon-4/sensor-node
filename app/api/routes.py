@@ -49,12 +49,39 @@ def get_meter_sensor():
         "humidity": status.get("humidity")
     }
 
+@router.get("/sensor/air-conditioner")
+def get_ac_status():
+    """Fetch status of the Air Conditioner."""
+    from app.core.config import get_settings
+    settings = get_settings()
+    device_id = settings.SWITCHBOT_AC_DEVICE_ID
+    if not device_id:
+        raise HTTPException(status_code=500, detail="SWITCHBOT_AC_DEVICE_ID not set")
+        
+    client = SwitchBotClient()
+    status = client.get_device_status(device_id)
+    return status
+
+@router.get("/sensor/humidifier")
+def get_humidifier_status():
+    """Fetch status of the Humidifier."""
+    from app.core.config import get_settings
+    settings = get_settings()
+    device_id = settings.SWITCHBOT_HUMIDIFIER_DEVICE_ID
+    if not device_id:
+        raise HTTPException(status_code=500, detail="SWITCHBOT_HUMIDIFIER_DEVICE_ID not set")
+        
+    client = SwitchBotClient()
+    status = client.get_device_status(device_id)
+    return status
+
 
 @router.get("/sensor/soil")
 def get_soil_sensor():
     """Fetch soil moisture data from the connected sensor."""
     return get_soil_moisture()
     
+
 
 @router.post("/control/air-conditioner/settings")
 def control_ac_settings(settings: ACSettings):
