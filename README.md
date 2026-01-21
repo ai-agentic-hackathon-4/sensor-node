@@ -145,6 +145,25 @@ curl -X POST "http://localhost:8000/control/humidifier/settings" \
 
 `mode` は文字列で `auto`, `101`(LOW), `102`(MEDIUM), `103`(HIGH) を指定します。`is_on` を `false` にすると電源をオフにします。
 
+## ポンプ制御（給水）
+POST `/control/pump` に JSON を送るとポンプを制御します（指定された水量を時間に換算して稼働）。
+
+例:
+```bash
+curl -X POST "http://localhost:8000/control/pump" \
+  -H "Content-Type: application/json" \
+  -d '{"volume_ml": 50}'
+```
+
+レスポンス例:
+```json
+{
+    "status": "success",
+    "message": "Poured 50.0ml",
+    "duration_sec": 0.88
+}
+```
+
 ## 参考: 手動撮影コマンド
 FastAPI を介さずに撮影する場合の例です。
 ```bash
