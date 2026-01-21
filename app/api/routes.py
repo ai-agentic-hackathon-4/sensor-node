@@ -7,11 +7,14 @@ from app.services.camera import capture_jpeg
 from app.services.switchbot import SwitchBotClient
 from app.services.soil import get_soil_moisture
 from app.services.bh1750 import get_lux
+from app.services.pump import pour_water
 
 from app.schemas.switchbot import ACSettings, HumidifierSettings
+from app.schemas.pump import PumpRequest
 
 
 router = APIRouter()
+print("DEBUG: Routes module loaded. Pump route should be registered.")
 
 
 @router.get("/image")
@@ -114,3 +117,11 @@ def control_humidifier_settings(settings: HumidifierSettings):
     device_id = settings_conf.SWITCHBOT_HUMIDIFIER_DEVICE_ID
     client = SwitchBotClient()
     return client.control_humidifier_settings(settings, device_id)
+
+
+@router.post("/control/pump")
+def control_pump(request: PumpRequest):
+    """
+    Control Water Pump.
+    """
+    return pour_water(request.volume_ml)
