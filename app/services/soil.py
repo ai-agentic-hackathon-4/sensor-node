@@ -2,10 +2,8 @@ import os
 import logging
 
 # Configuration for calibration (based on provided script)
-# DRY_VAL = 16700  # Air (0%)
-# WET_VAL = 4300   # Water (100%)
-DRY_VAL = 4798
-WET_VAL = 100
+DRY_VAL = 16700  # Air (0%)
+WET_VAL = 4300   # Water (100%)
 GAIN = 1
 
 logger = logging.getLogger(__name__)
