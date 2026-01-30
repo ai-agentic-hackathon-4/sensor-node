@@ -117,13 +117,19 @@ class SwitchBotClient:
         # Ensure ON
         self.send_command(device_id=device_id, command="turnOn")
         
-        # Small delay to ensure command is processed
         time.sleep(1)
+        
+        # Humidifier 2 requires a JSON object parameter (passed as dict)
+        # Default target humidity to 50% if not specified
+        parameter = {
+            "mode": int(settings.mode.value),
+            "targetHumidify": 50
+        }
         
         return self.send_command(
             device_id=device_id,
             command="setMode",
-            parameter=settings.mode.value,
+            parameter=parameter,
             command_type="command"
         )
 

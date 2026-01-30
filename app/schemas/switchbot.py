@@ -27,9 +27,10 @@ class ACSettings(BaseModel):
 
 class HumidifierMode(str, Enum):
     AUTO = "auto"
-    LOW = "101"
-    MEDIUM = "102"
-    HIGH = "103"
+    LOW = "3"
+    MEDIUM = "2"
+    HIGH = "1"
+    QUIET = "4"
 
 class HumidifierSettings(BaseModel):
     mode: HumidifierMode
