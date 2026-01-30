@@ -41,10 +41,10 @@ graph TD
     end
 
     subgraph "External/Cloud"
-        SwitchBotAPI[SwitchBot Cloud API]
-        Device1[Meter (Temp/Hum)]
-        Device2[Humidifier]
-        Device3[Air Conditioner]
+        SwitchBotAPI["SwitchBot Cloud API"]
+        Device1["Meter (Temp/Hum)"]
+        Device2["Humidifier"]
+        Device3["Air Conditioner"]
     end
 
     FastAPI --> Services
