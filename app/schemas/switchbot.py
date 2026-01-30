@@ -26,7 +26,7 @@ class ACSettings(BaseModel):
     is_on: bool = True
 
 class HumidifierMode(str, Enum):
-    AUTO = "auto"
+    AUTO = "7"
     LOW = "3"
     MEDIUM = "2"
     HIGH = "1"
