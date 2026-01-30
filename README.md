@@ -28,13 +28,13 @@ graph TD
         FastAPI[FastAPI Server<br>Port: 8000]
         
         subgraph "Local Hardware"
-            Camera[Camera Module<br>libcamera]
+            Camera["Camera Module<br>libcamera"]
             I2C[I2C Bus]
             GPIO[GPIO Pins]
             
-            ADS1115[ADS1115 ADC<br>(Soil Sensor)]
-            BH1750[BH1750<br>(Illuminance)]
-            Pump[Water Pump<br>(Relay)]
+            ADS1115["ADS1115 ADC<br>(Soil Sensor)"]
+            BH1750["BH1750<br>(Illuminance)"]
+            Pump["Water Pump<br>(Relay)"]
         end
         
         Services[Services Layer]
