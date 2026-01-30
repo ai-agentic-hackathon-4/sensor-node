@@ -20,6 +20,49 @@ Raspberry Pi カメラ画像の取得、SwitchBot 温湿度計/エアコン/加�
 └── README.md
 ```
 
+## システム構成図 (Architecture)
+
+```mermaid
+graph TD
+    subgraph "Raspberry Pi (Sensor Node)"
+        FastAPI[FastAPI Server<br>Port: 8000]
+        
+        subgraph "Local Hardware"
+            Camera[Camera Module<br>libcamera]
+            I2C[I2C Bus]
+            GPIO[GPIO Pins]
+            
+            ADS1115[ADS1115 ADC<br>(Soil Sensor)]
+            BH1750[BH1750<br>(Illuminance)]
+            Pump[Water Pump<br>(Relay)]
+        end
+        
+        Services[Services Layer]
+    end
+
+    subgraph "External/Cloud"
+        SwitchBotAPI[SwitchBot Cloud API]
+        Device1[Meter (Temp/Hum)]
+        Device2[Humidifier]
+        Device3[Air Conditioner]
+    end
+
+    FastAPI --> Services
+    
+    Services -- Capture --> Camera
+    Services -- Read --> I2C
+    Services -- Control --> GPIO
+    
+    I2C -- Analog Read --> ADS1115
+    I2C -- Lux Read --> BH1750
+    GPIO -- On/Off --> Pump
+    
+    Services -- HTTP Request --> SwitchBotAPI
+    SwitchBotAPI -- Control/Read --> Device1
+    SwitchBotAPI -- Control --> Device2
+    SwitchBotAPI -- Control --> Device3
+```
+
 ## 前提
 - Raspberry Pi OS 環境で `rpicam-jpeg` コマンドが利用可能であること
 - 土壌センサーは ADS1115 (Adafruit-ADS1x15) を使用するため I2C を有効化済みであること
