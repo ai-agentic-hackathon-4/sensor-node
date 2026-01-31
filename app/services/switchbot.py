@@ -9,7 +9,7 @@ import urllib.request
 import urllib.error
 from fastapi import HTTPException
 
-from app.schemas.switchbot import ACSettings, HumidifierSettings, SwitchBotCommand
+from app.schemas.switchbot import ACSettings, HumidifierSettings, SwitchBotCommand, LightSettings
 
 from app.core.config import get_settings
 
@@ -132,4 +132,48 @@ class SwitchBotClient:
             parameter=parameter,
             command_type="command"
         )
+
+    def control_light_settings(self, settings: LightSettings, device_id: str) -> dict:
+        if not settings.is_on:
+            return self.send_command(
+                device_id=device_id,
+                command="turnOff",
+                command_type="command"
+            )
+
+        # Turn On first
+        self.send_command(device_id=device_id, command="turnOn")
+        time.sleep(0.5)
+
+        # Set Brightness
+        if settings.brightness:
+            self.send_command(
+                device_id=device_id, 
+                command="setBrightness", 
+                parameter=str(settings.brightness)
+            )
+            time.sleep(0.5)
+
+        # Set Color (priority over temp if specific color requested besides white)
+        # However, for plant growth, we might just use white usually.
+        # Check format R:G:B
+        if settings.color and settings.color != "0:0:0":
+             self.send_command(
+                device_id=device_id, 
+                command="setColor", 
+                parameter=settings.color
+            )
+        
+        # Set Color Temperature if provided and color is not dominant?
+        # SwitchBot API might overwrite color if temp is set.
+        # logical handling: if color is default white, maybe set temp.
+        # For simplicity, we execute both if provided, trusting user intent.
+        if settings.color_temperature:
+             self.send_command(
+                device_id=device_id, 
+                command="setColorTemperature", 
+                parameter=str(settings.color_temperature)
+            )
+
+        return {"status": "success", "settings": settings.dict()}
 

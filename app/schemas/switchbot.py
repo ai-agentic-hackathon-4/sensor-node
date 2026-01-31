@@ -35,3 +35,9 @@ class HumidifierMode(str, Enum):
 class HumidifierSettings(BaseModel):
     mode: HumidifierMode
     is_on: bool = True
+
+class LightSettings(BaseModel):
+    is_on: bool = True
+    brightness: int = 100 # 1-100
+    color: str = "255:255:255" # R:G:B
+    color_temperature: int = 2700 # 2700-6500
