@@ -1,4 +1,33 @@
-INFO:     Started server process [5462]
+INFO:     Started server process [28747]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+DEBUG: Routes module loaded. Pump route should be registered.
+INFO:     192.168.11.228:55680 - "GET /sensor/meter HTTP/1.1" 200 OK
+INFO:     192.168.11.228:55680 - "GET /sensor/soil HTTP/1.1" 200 OK
+INFO:     192.168.11.228:55680 - "GET /sensor/bh1750 HTTP/1.1" 200 OK
+INFO:     192.168.11.51:39516 - "GET /sensor/soil HTTP/1.1" 200 OK
+INFO:     192.168.11.51:39500 - "GET /sensor/meter HTTP/1.1" 200 OK
+INFO:     192.168.11.51:39530 - "GET /sensor/air-conditioner HTTP/1.1" 200 OK
+INFO:     192.168.11.51:39534 - "GET /sensor/humidifier HTTP/1.1" 200 OK
+INFO:     192.168.11.51:39526 - "GET /sensor/bh1750 HTTP/1.1" 200 OK
+INFO:     192.168.11.51:39492 - "GET /image HTTP/1.1" 200 OK
+INFO:     192.168.11.228:56412 - "GET /sensor/meter HTTP/1.1" 200 OK
+INFO:     192.168.11.228:56412 - "GET /sensor/soil HTTP/1.1" 200 OK
+INFO:     192.168.11.228:56412 - "GET /sensor/bh1750 HTTP/1.1" 200 OK
+INFO:     192.168.11.228:41030 - "GET /sensor/meter HTTP/1.1" 200 OK
+INFO:     192.168.11.228:41030 - "GET /sensor/soil HTTP/1.1" 200 OK
+INFO:     192.168.11.228:41030 - "GET /sensor/bh1750 HTTP/1.1" 200 OK
+INFO:     192.168.11.51:41782 - "POST /control/pump HTTP/1.1" 200 OK
+INFO:     192.168.11.228:35808 - "GET /sensor/meter HTTP/1.1" 200 OK
+INFO:     192.168.11.228:35808 - "GET /sensor/soil HTTP/1.1" 200 OK
+INFO:     192.168.11.228:35808 - "GET /sensor/bh1750 HTTP/1.1" 200 OK
+INFO:     192.168.11.228:50728 - "GET /sensor/meter HTTP/1.1" 200 OK
+INFO:     192.168.11.228:50728 - "GET /sensor/soil HTTP/1.1" 200 OK
+INFO:     192.168.11.228:50728 - "GET /sensor/bh1750 HTTP/1.1" 200 OK
+INFO:     192.168.11.228:36562 - "GET /sensor/meter HTTP/1.1" 200 OK
+INFO:     192.168.11.228:36562 - "GET /sensor/soil HTTP/1.1" 200 OK
+INFO:     192.168.11.228:36562 - "GET /sensor/bh1750 HTTP/1.1" 200 OK
+INFO:     192.168.11.228:56610 - "GET /sensor/meter HTTP/1.1" 200 OK
+INFO:     192.168.11.228:56610 - "GET /sensor/soil HTTP/1.1" 200 OK
+INFO:     192.168.11.228:56610 - "GET /sensor/bh1750 HTTP/1.1" 200 OK
