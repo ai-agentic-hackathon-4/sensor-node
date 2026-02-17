@@ -8,7 +8,7 @@ class Settings:
         self.SWITCHBOT_METER_DEVICE_ID: str = os.environ.get("SWITCHBOT_METER_DEVICE_ID", "")
         self.SWITCHBOT_AC_DEVICE_ID: str = os.environ.get("SWITCHBOT_AC_DEVICE_ID", "")
         self.SWITCHBOT_HUMIDIFIER_DEVICE_ID: str = os.environ.get("SWITCHBOT_HUMIDIFIER_DEVICE_ID", "")
-        self.SWITCHBOT_LIGHT_DEVICE_ID: str = os.environ.get("SWITCHBOT_LIGHT_DEVICE_ID", "")
+        self.SWITCHBOT_PLUG_MINI_DEVICE_ID: str = os.environ.get("SWITCHBOT_PLUG_MINI_DEVICE_ID", "")
 
 @lru_cache()
 def get_settings() -> Settings:

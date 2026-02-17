@@ -9,7 +9,7 @@ from app.services.soil import get_soil_moisture
 from app.services.bh1750 import get_lux
 from app.services.pump import pour_water
 
-from app.schemas.switchbot import ACSettings, HumidifierSettings, LightSettings
+from app.schemas.switchbot import ACSettings, HumidifierSettings, PlugMiniSettings
 from app.schemas.pump import PumpRequest
 
 
@@ -126,16 +126,16 @@ def control_pump(request: PumpRequest):
     """
     return pour_water(request.volume_ml)
 
-@router.post("/control/smart-bulb/settings")
-def control_smart_bulb_settings(settings: LightSettings):
+@router.post("/control/plug-mini/settings")
+def control_plug_mini_settings(settings: PlugMiniSettings):
     """
-    Control Smart Bulb settings (Power, Brightness, Color, Temp).
+    Control Plug Mini (Power on/off only).
     """
     from app.core.config import get_settings
     conf = get_settings()
-    device_id = conf.SWITCHBOT_LIGHT_DEVICE_ID
+    device_id = conf.SWITCHBOT_PLUG_MINI_DEVICE_ID
     if not device_id:
-        raise HTTPException(status_code=500, detail="SWITCHBOT_LIGHT_DEVICE_ID not set")
+        raise HTTPException(status_code=500, detail="SWITCHBOT_PLUG_MINI_DEVICE_ID not set")
     
     client = SwitchBotClient()
-    return client.control_light_settings(settings, device_id)
+    return client.control_plug_mini(settings, device_id)
